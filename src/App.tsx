@@ -4,6 +4,7 @@ import {
   signInWithPopup, 
   GoogleAuthProvider, 
   signOut,
+  signInAnonymously,
   User 
 } from 'firebase/auth';
 import { 
@@ -94,6 +95,14 @@ export default function App() {
       await signInWithPopup(auth, provider);
     } catch (error) {
       console.error('Login failed:', error);
+    }
+  };
+
+  const loginAsGuest = async () => {
+    try {
+      await signInAnonymously(auth);
+    } catch (error) {
+      console.error('Guest login failed:', error);
     }
   };
 
@@ -188,13 +197,24 @@ export default function App() {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">GeraOrça</h1>
             <p className="text-gray-600 mb-8">Simplifique sua criação de orçamentos e serviços.</p>
-            <button 
-              onClick={login}
-              className="w-full bg-indigo-600 text-white rounded-xl py-4 font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
-            >
-              <LogIn size={20} />
-              Entrar com Google
-            </button>
+            <div className="space-y-3">
+              <button 
+                onClick={login}
+                className="w-full bg-indigo-600 text-white rounded-xl py-4 font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-100"
+              >
+                <LogIn size={20} />
+                Entrar com Google
+              </button>
+              <button 
+                onClick={loginAsGuest}
+                className="w-full bg-white text-gray-700 border border-gray-200 rounded-xl py-4 font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+              >
+                Continuar sem Login
+              </button>
+              <p className="text-[10px] text-text-muted mt-4">
+                * No modo sem login, seus dados ficam vinculados a este navegador.
+              </p>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -230,8 +250,10 @@ export default function App() {
               <UserIcon size={16} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold truncate">{user.displayName}</p>
-              <p className="text-[10px] text-text-muted truncate">{user.email}</p>
+              <p className="text-xs font-bold truncate">{user.displayName || 'Visitante'}</p>
+              <p className="text-[10px] text-text-muted truncate">
+                {user.isAnonymous ? 'Modo Convidado' : user.email}
+              </p>
             </div>
           </div>
           <button 
