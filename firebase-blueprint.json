@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "Quote": {
+      "title": "Quote",
+      "description": "Represents a budget/quote containing products and services.",
+      "type": "object",
+      "properties": {
+        "clientName": { "type": "string", "description": "Name of the client." },
+        "clientEmail": { "type": "string", "format": "email", "description": "Email of the client." },
+        "date": { "type": "string", "format": "date-time", "description": "Date of the quote." },
+        "items": { "type": "array", "description": "List of products and services in the quote." },
+        "total": { "type": "number", "description": "Total value of the quote." },
+        "status": { "type": "string", "enum": ["draft", "sent", "approved", "rejected"], "description": "Current status of the quote." },
+        "userId": { "type": "string", "description": "ID of the user who created the quote." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp." }
+      },
+      "required": ["clientName", "items", "total", "userId", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile and settings.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["user", "admin"] }
+      },
+      "required": ["name", "email"]
+    }
+  },
+  "firestore": {
+    "/quotes/{quoteId}": {
+      "schema": "Quote",
+      "description": "Quotes created by users."
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile data."
+    }
+  }
+}

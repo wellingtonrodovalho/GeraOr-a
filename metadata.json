@@ -1,0 +1,6 @@
+{
+  "name": "Criador de Orçamentos",
+  "description": "Aplicativo genérico para criação de orçamentos, permitindo inclusão de produtos e serviços com cálculos automáticos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

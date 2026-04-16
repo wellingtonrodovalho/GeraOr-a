@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --color-primary: #2563eb;
+  --color-primary-dark: #1e40af;
+  --color-app-bg: #f8fafc;
+  --color-sidebar: #ffffff;
+  --color-app-border: #e2e8f0;
+  --color-text-main: #1e293b;
+  --color-text-muted: #64748b;
+  --color-success: #10b981;
+  --color-summary-dark: #1e293b;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-app-bg text-text-main;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-xl border border-app-border shadow-[0_1px_3px_rgba(0,0,0,0.05)] p-6;
+  }
+
+  .btn {
+    @apply px-5 py-2.5 rounded-lg font-semibold cursor-pointer text-sm transition-all active:scale-95;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border border-app-border text-text-main hover:bg-gray-50;
+  }
+
+  .badge {
+    @apply px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider;
+  }
+
+  .badge-product {
+    @apply bg-amber-100 text-amber-800;
+  }
+
+  .badge-service {
+    @apply bg-emerald-100 text-emerald-800;
+  }
+
+  .budget-table th {
+    @apply text-left px-3 py-3 border-b-2 border-app-border text-text-muted text-sm font-semibold;
+  }
+
+  .budget-table td {
+    @apply px-3 py-4 border-b border-app-border text-sm;
+  }
+
+  .form-label {
+    @apply block text-[11px] uppercase tracking-widest text-text-muted mb-1.5 font-bold;
+  }
+}
