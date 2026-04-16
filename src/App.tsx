@@ -35,7 +35,6 @@ import {
   Filter,
   ArrowLeft
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 
 // Currency formatter
 const formatCurrency = (value: number) => {
@@ -155,7 +154,6 @@ export default function App() {
 
   const handleDeleteQuote = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!window.confirm('Deseja realmente excluir este orçamento?')) return;
     try {
       await deleteDoc(doc(db, 'quotes', id));
     } catch (error) {
@@ -174,11 +172,7 @@ export default function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <motion.div 
-          animate={{ rotate: 360 }} 
-          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full"
-        />
+        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -186,11 +180,7 @@ export default function App() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden"
-        >
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-8 text-center">
             <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 text-indigo-600">
               <FileText size={40} />
@@ -200,14 +190,14 @@ export default function App() {
             <div className="space-y-3">
               <button 
                 onClick={login}
-                className="w-full bg-indigo-600 text-white rounded-xl py-4 font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-100"
+                className="w-full bg-indigo-600 text-white rounded-xl py-4 font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-100 cursor-pointer"
               >
                 <LogIn size={20} />
                 Entrar com Google
               </button>
               <button 
                 onClick={loginAsGuest}
-                className="w-full bg-white text-gray-700 border border-gray-200 rounded-xl py-4 font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+                className="w-full bg-white text-gray-700 border border-gray-200 rounded-xl py-4 font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 Continuar sem Login
               </button>
@@ -216,7 +206,7 @@ export default function App() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     );
   }
@@ -266,129 +256,115 @@ export default function App() {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col min-h-screen relative">
+      <main className="flex-1 flex flex-col min-h-screen overflow-y-auto relative z-0">
         <div className="p-8 flex flex-col gap-6">
-          <AnimatePresence mode="wait">
-            {isEditing ? (
-              <motion.div 
-                key="editor"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex flex-col gap-6"
-              >
-                <QuoteEditor 
-                  quote={currentQuote!} 
-                  onSave={handleSaveQuote} 
-                  onCancel={() => { setIsEditing(false); setCurrentQuote(null); }}
-                  onChange={setCurrentQuote}
-                />
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="dashboard"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex flex-col gap-6"
-              >
-                <div className="flex items-center justify-between">
-                  <h1 className="text-2xl font-semibold">Orçamentos</h1>
-                  <button 
-                    onClick={startNewQuote}
-                    className="btn btn-primary flex items-center gap-2"
+          {isEditing ? (
+            <div key="editor" className="flex flex-col gap-6">
+              <QuoteEditor 
+                quote={currentQuote!} 
+                onSave={handleSaveQuote} 
+                onCancel={() => { setIsEditing(false); setCurrentQuote(null); }}
+                onChange={setCurrentQuote}
+              />
+            </div>
+          ) : (
+            <div key="dashboard" className="flex flex-col gap-6">
+              <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-semibold">Orçamentos</h1>
+                <button 
+                  onClick={startNewQuote}
+                  className="btn btn-primary flex items-center gap-2 cursor-pointer z-10"
+                >
+                  <Plus size={18} />
+                  Novo Orçamento
+                </button>
+              </div>
+
+              <div className="card !p-0 overflow-hidden">
+                <div className="p-4 border-b border-app-border bg-gray-50/50 flex gap-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
+                    <input 
+                      type="text" 
+                      placeholder="Buscar cliente..." 
+                      className="w-full pl-10 pr-4 py-2 bg-white border border-app-border rounded-lg focus:ring-1 focus:ring-primary outline-none transition text-sm"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <select 
+                    className="bg-white border border-app-border rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-primary transition text-xs font-semibold text-text-muted"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as QuoteStatus | 'all')}
                   >
-                    <Plus size={18} />
-                    Novo Orçamento
-                  </button>
+                    <option value="all">TODOS STATUS</option>
+                    <option value="draft">BORRÃO</option>
+                    <option value="sent">ENVIADO</option>
+                    <option value="approved">APROVADO</option>
+                    <option value="rejected">RECUSADO</option>
+                  </select>
                 </div>
 
-                <div className="card !p-0 overflow-hidden">
-                  <div className="p-4 border-b border-app-border bg-gray-50/50 flex gap-4">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
-                      <input 
-                        type="text" 
-                        placeholder="Buscar cliente..." 
-                        className="w-full pl-10 pr-4 py-2 bg-white border border-app-border rounded-lg focus:ring-1 focus:ring-primary outline-none transition text-sm"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                    <select 
-                      className="bg-white border border-app-border rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-primary transition text-xs font-semibold text-text-muted"
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value as QuoteStatus | 'all')}
-                    >
-                      <option value="all">TODOS STATUS</option>
-                      <option value="draft">BORRÃO</option>
-                      <option value="sent">ENVIADO</option>
-                      <option value="approved">APROVADO</option>
-                      <option value="rejected">RECUSADO</option>
-                    </select>
-                  </div>
-
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse budget-table">
-                      <thead>
-                        <tr>
-                          <th>Cliente</th>
-                          <th>Data</th>
-                          <th>Status</th>
-                          <th>Total</th>
-                          <th className="text-right">Ações</th>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse budget-table">
+                    <thead>
+                      <tr>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th className="text-right">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-app-border">
+                      {filteredQuotes.length > 0 ? filteredQuotes.map(quote => (
+                        <tr 
+                          key={quote.id} 
+                          className="hover:bg-slate-50 cursor-pointer transition relative z-20"
+                          onClick={() => handleEditQuote(quote)}
+                        >
+                          <td>
+                            <div className="font-semibold">{quote.clientName || 'Sem nome'}</div>
+                            <div className="text-[11px] text-text-muted">{quote.clientEmail}</div>
+                          </td>
+                          <td>
+                            {new Date(quote.date).toLocaleDateString('pt-BR')}
+                          </td>
+                          <td>
+                            <span className={`badge ${
+                              quote.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                              quote.status === 'rejected' ? 'bg-rose-100 text-rose-800' :
+                              quote.status === 'sent' ? 'bg-blue-100 text-blue-800' :
+                              'bg-slate-100 text-slate-800'
+                            }`}>
+                              {quote.status}
+                            </span>
+                          </td>
+                          <td className="font-bold text-primary">
+                            {formatCurrency(quote.total)}
+                          </td>
+                          <td className="text-right">
+                            <button 
+                              onClick={(e) => handleDeleteQuote(quote.id, e)}
+                              className="p-2 text-text-muted hover:text-rose-600 transition cursor-pointer relative z-30"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-app-border">
-                        {filteredQuotes.length > 0 ? filteredQuotes.map(quote => (
-                          <tr 
-                            key={quote.id} 
-                            className="hover:bg-slate-50 cursor-pointer transition"
-                            onClick={() => handleEditQuote(quote)}
-                          >
-                            <td>
-                              <div className="font-semibold">{quote.clientName || 'Sem nome'}</div>
-                              <div className="text-[11px] text-text-muted">{quote.clientEmail}</div>
-                            </td>
-                            <td>
-                              {new Date(quote.date).toLocaleDateString('pt-BR')}
-                            </td>
-                            <td>
-                              <span className={`badge ${
-                                quote.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
-                                quote.status === 'rejected' ? 'bg-rose-100 text-rose-800' :
-                                quote.status === 'sent' ? 'bg-blue-100 text-blue-800' :
-                                'bg-slate-100 text-slate-800'
-                              }`}>
-                                {quote.status}
-                              </span>
-                            </td>
-                            <td className="font-bold text-primary">
-                              {formatCurrency(quote.total)}
-                            </td>
-                            <td className="text-right">
-                              <button 
-                                onClick={(e) => handleDeleteQuote(quote.id, e)}
-                                className="p-2 text-text-muted hover:text-rose-600 transition"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </td>
-                          </tr>
-                        )) : (
-                          <tr>
-                            <td colSpan={5} className="py-12 text-center text-text-muted">
-                              Nenhum orçamento encontrado.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                      )) : (
+                        <tr>
+                          <td colSpan={5} className="py-12 text-center text-text-muted">
+                            Nenhum orçamento encontrado.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
